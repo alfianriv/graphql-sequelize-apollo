@@ -1,22 +1,38 @@
 import cors from 'cors';
 import express from 'express';
+import jwt from 'jsonwebtoken';
 import uuidv4 from 'uuid/v4';
-import { ApolloServer, gql } from 'apollo-server-express';
+import { ApolloServer, gql, AuthenticationError } from 'apollo-server-express';
 import models, { sequelize } from './models';
 import resolvers from './resolvers';
 import schema from './schema';
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const app = express();
 app.use(cors());
 
 const eraseDatabaseOnSync = true;
 
+const getMe = async req => {
+  const token = req.headers['x-token'];
+
+  if (token) {
+    try {
+     return await jwt.verify(token, process.env.SECRET);
+    } catch(e) {
+      throw new AuthenticationError(
+        'Your session expired, sign in again'
+      );
+    }
+  }
+};
+
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
   formatError: error => {
-    // remove the internal sequelize error message
-    // leave only the important validation error
     const message = error.message
       .replace('SequelizeValidationError: ', '')
       .replace('Validation error: ', '');
@@ -26,10 +42,14 @@ const server = new ApolloServer({
       message,
     };
   },
-  context: async() => ({
-    models,
-    me: await models.User.findByLogin('terry')
-  })
+  context: async({ req }) => {
+    const me = await getMe(req);
+    return {
+      models,
+      me,
+      secret: process.env.SECRET,
+    }
+  }
 });
 
 server.applyMiddleware({ app, path: '/graphql' });
@@ -47,6 +67,8 @@ const createUsersWithMessages = async () => {
   await models.User.create(
     {
       username: 'terry',
+      email: 'terry@mail.com',
+      password: 'password',
       messages: [
         {
           text: 'Published the School of Hard Knocks',
@@ -61,6 +83,8 @@ const createUsersWithMessages = async () => {
   await models.User.create(
     {
       username: 'jerome',
+      email: 'jerome@mail.com',
+      password: 'testing',
       messages: [
         {
           text: 'Happy to release ...',
