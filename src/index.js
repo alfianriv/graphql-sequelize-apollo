@@ -15,6 +15,8 @@ app.use(cors());
 
 const eraseDatabaseOnSync = true;
 
+
+// authentication on a server level.
 const getMe = async req => {
   const token = req.headers['x-token'];
 
@@ -69,6 +71,7 @@ const createUsersWithMessages = async () => {
       username: 'terry',
       email: 'terry@mail.com',
       password: 'password',
+      role: 'ADMIN',
       messages: [
         {
           text: 'Published the School of Hard Knocks',

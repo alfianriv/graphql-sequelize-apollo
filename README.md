@@ -10,6 +10,15 @@ Schema Stitching
 Read documentation and what Link Schema does
 
 
+GraphQL Authorization on a Resolver Level
+We use combine resolvers / resolver middleware which comes from the package graphql-resolvers.
+
+Let's create one in our resolver file under authorization.js
+
+You can see we can apply this file to our message mutations by using combineResolvers.
+
+
+
 const resolvers = {
   Query: {
     me: (parent, args, { me }) => {
