@@ -2,7 +2,10 @@
   "name": "auth-graphql",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
+  "engines": {
+    "node": "10.11.0"
+  },
   "scripts": {
     "start": "NODE_ENV=development nodemon --exec  babel-node ./src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
