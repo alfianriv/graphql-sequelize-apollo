@@ -166,3 +166,95 @@ export default {
 };
 ```
 
+### Batching and Caching
+
+Installed the Facebook Open source dataloader.
+`npm i --save dataloader`
+
+Then in our index.js file we imported dataloader and used it in the following way. 
+
+```js
+
+const batchUsers = async (keys, models) => {
+  const users = await models.User.findAll({
+    where: {
+      id: {
+        $in: keys,
+      },
+    },
+  });
+
+  return keys.map(key => users.find(user => user.id === key));
+};
+
+const server = new ApolloServer({
+  typeDefs: schema,
+  resolvers,
+  ...
+  context: async ({ req, connection }) => {
+    if (connection) {
+      ...
+    }
+
+    if (req) {
+      const me = await getMe(req);
+
+      return {
+        models,
+        me,
+        secret: process.env.SECRET,
+        loaders: {
+          user: new DataLoader(keys => batchUsers(keys, models)),
+        },
+      };
+    }
+  },
+});
+
+```
+
+The loader acts as an abstraction on top of the models and can be passed as context to the resolvers
+The DataLoader function is very important. It gives us access to a list of keys in its arguements. 
+These keys are your set of identifiers (no duplication) which can be used to retrieve items from
+the database. 
+
+Now, since we are passing the loader for the batched user retrieval as context to the resolvers, we
+can make the most of it in the src/resolvers/message.js file. 
+
+
+##### From 
+```js
+    user: async (message, args, { models }) => {
+      return await models.User.findById(message.userId);
+    },
+```
+
+##### To
+```js
+
+export default {
+  Query: {
+    ...
+  },
+
+  Mutation: {
+    ...
+  },
+
+  Message: {
+    user: async (message, args, { loaders }) => {
+      return await loaders.user.load(message.userId);
+    },
+  },
+
+  Subscription: {
+    ...
+  },
+};
+```
+While the load() function takes each identifier individually, it will batch all these 
+identifiers into one set and request all users at the same time.
+
+From the docs "Then load individual values from the loader. DataLoader will coalesce all 
+individual loads which occur within a single frame of execution (a single tick of the event loop) 
+and then call your batch function with all requested keys."

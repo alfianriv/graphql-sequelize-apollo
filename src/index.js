@@ -4,9 +4,11 @@ import http from 'http';
 import jwt from 'jsonwebtoken';
 import uuidv4 from 'uuid/v4';
 import { ApolloServer, gql, AuthenticationError } from 'apollo-server-express';
+import DataLoader from 'dataloader';
 import models, { sequelize } from './models';
 import resolvers from './resolvers';
 import schema from './schema';
+import loaders from './loaders';
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -49,6 +51,11 @@ const server = new ApolloServer({
     if (connection) {
       return {
         models,
+        loaders: {
+          user: new DataLoader(keys =>
+            loaders.user.batchUsers(keys, models),
+          ),
+        },
       };
     }
     if (req) {
@@ -57,6 +64,9 @@ const server = new ApolloServer({
         models,
         me,
         secret: process.env.SECRET,
+        loaders: {
+          user: new DataLoader(keys => loaders.user.batchUsers(keys, models)),
+        },
       };
     }
   }
