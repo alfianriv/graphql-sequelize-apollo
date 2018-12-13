@@ -35,6 +35,7 @@ const getMe = async req => {
 };
 
 const server = new ApolloServer({
+  introspection: true,
   typeDefs: schema,
   resolvers,
   formatError: error => {
@@ -78,12 +79,15 @@ server.applyMiddleware({ app, path: '/graphql' });
 const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
-sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
-  if (eraseDatabaseOnSync) {
+const isProduction = !!process.env.DATABASE_URL;
+const port = process.env.PORT || 8000;
+
+sequelize.sync({ force: isProduction }).then(async () => {
+  if (isProduction) {
     createUsersWithMessages(new Date());
   }
-  httpServer.listen( {port: 8000 }, () => {
-    console.log('Apollo Server on http://localhost:8000/graphql');
+  httpServer.listen({ port }, () => {
+    console.log(`Apollo Server on http://localhost:${port}/graphql`);
   });
 });
 
