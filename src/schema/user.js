@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-express';
 
 export default gql`
     extend type Query {
-        users: [User!]
+        users(options: OptionQuery): [User!]
         user(id: ID!): User
         me: User
     }
@@ -30,5 +30,12 @@ export default gql`
         donator: [Donate!]
         donations: [Donate!]
         createdAt: Date!
+    }
+
+    type LimitUser {
+        id: ID!
+        username: String!
+        email: String!
+        role: String!
     }
 `;

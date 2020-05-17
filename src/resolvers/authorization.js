@@ -1,8 +1,6 @@
 import { ForbiddenError } from 'apollo-server';
 import { combineResolvers, skip } from 'graphql-resolvers';
 
-
-// acts as middleware for Graphql - will check if user is logged in. Used in conjunction with combineResolvers.
 export const isAuthenticated = (parent, args, { me }) =>
   me ? skip : new ForbiddenError('Not authenticated as a User');
 
@@ -14,7 +12,6 @@ export const isAdmin = combineResolvers(
       : new ForbiddenError('Not Authorized as Admin')
 );
 
-// permission based
 export const isDonateOwner = async (
   parent,
   { id },
@@ -22,7 +19,11 @@ export const isDonateOwner = async (
 ) => {
   const donate = await models.Donate.findById(id, { raw: true });
 
-  if (message.userId !== me.id) {
+  if(!donate){
+    throw new ForbiddenError('Donate not found');
+  }
+
+  if (donate.userId !== me.id) {
     throw new ForbiddenError('Not Authenticated as owner');
   }
   return skip;

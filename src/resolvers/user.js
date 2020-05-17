@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { combineResolvers } from 'graphql-resolvers';
 import { AuthenticationError, UserInputError } from 'apollo-server';
 import { isAdmin } from './authorization';
+import { queryHelper } from '../helper/query-helper';
 
 const createToken = async (user, secret, expiresIn) => {
   const { id, email, username, role } = user;
@@ -12,8 +13,10 @@ const createToken = async (user, secret, expiresIn) => {
 
 export default {
   Query: {
-    users: async (parent, args, { models }) => {
-      return await models.User.findAll();
+    users: async (parent, {options}, { models }) => {
+      const query = queryHelper(optins)
+
+      return await models.User.findAll(query);
     },
     user: async (parent, { id }, { models }) => {
       return await models.User.findById(id);
@@ -22,7 +25,7 @@ export default {
       if (!me) {
         return null;
       }
-      return await models.User.findById(me.id);
+      return await models.User.findByPk(me.id);
     },
   },
   Mutation: {

@@ -1,48 +1,19 @@
 import { combineResolvers } from 'graphql-resolvers';
 import Sequelize from 'sequelize';
-import pubsub, { EVENTS } from '../subscription';
+import pubsub from '../subscription';
 import {
   isAuthenticated,
   isDonateOwner,
 } from './authorization';
-
-const toCursorHash = string => Buffer.from(string).toString('base64');
-const fromCursorHash = string =>
-  Buffer.from(string, 'base64').toString('ascii');
-
+import { queryHelper } from '../helper/query-helper';
+import { withFilter } from 'apollo-server';
 
 export default {
   Query: {
-    donates: async (parent, { cursor, limit = 100 }, { models }) => {
-      const cursorOptions = cursor
-        ? {
-          where: {
-            createdAt: {
-              [Sequelize.Op.lt]: fromCursorHash(cursor),
-            },
-          },
-        }
-        : {};
-      const donates = await models.Donate.findAll({
-        order: [['createdAt', 'DESC']],
-        limit: limit + 1,
-        ...cursorOptions,
-      });
-      // will check if there is a next page or not.
-      const hasNextPage = donates.length > limit;
+    donates: async (parent, { options}, { models }) => {
+      const query = queryHelper(options)
 
-      const edges = hasNextPage ? donates.slice(0, -1) : donates;
-
-      // pageInfo now has the cursor of th last message in the list.
-      return {
-        edges,
-        pageInfo: {
-          hasNextPage,
-          endCursor: toCursorHash(
-            edges[edges.length - 1].createdAt.toString()
-          ),
-        },
-      }
+      return await models.Donate.findAll(query);
     },
   },
   Mutation: {
@@ -56,11 +27,11 @@ export default {
           userId: me.id,
         });
 
-        pubsub.publish(EVENTS.DONATE.CREATED, {
-          donateCreated: { donate },
-        });
+        const res = await models.Donate.findById(donate.id)
 
-        return donate;
+        pubsub.publish("DONATE_CREATE", {donateCreated: res});
+
+        return res;
       },
     ),
 
@@ -74,7 +45,7 @@ export default {
   },
 
   Donate: {
-    user: async (donate, args, { loaders }) => {
+    donator: async (donate, args, { loaders }) => {
       return await loaders.user.load(donate.userId);
     },
     donate_to: async (donate, args, { loaders }) => {
@@ -83,7 +54,15 @@ export default {
   },
   Subscription: {
     donateCreated: {
-      subscribe: () => pubsub.asyncIterator(EVENTS.DONATE.CREATED),
+      subscribe: withFilter(
+        () => pubsub.asyncIterator("DONATE_CREATE"),
+        (payload, variables) => {
+          if(payload.donateCreated.donateTo === variables.id){
+            return true
+          }
+          return true
+        }
+      ),
     },
   },
 };

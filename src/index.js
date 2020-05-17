@@ -74,7 +74,6 @@ const server = new ApolloServer({
 
 server.applyMiddleware({ app, path: '/graphql' });
 
-// what we wrapped our app in to set up the Apollo Server Subscription.
 const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
