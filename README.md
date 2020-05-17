@@ -59,3 +59,8 @@ Then run this:
 or
 
     npm run dev
+    
+
+## Usage
+
+Open your browser than to localhost:3000/graphql
