@@ -47,7 +47,7 @@ const user = (sequelize, DataTypes) => {
 
 
   User.associate = models => {
-    User.hasMany(models.Donate, { onDelete: 'CASCADE' });
+    User.hasMany(models.Donate);
     User.hasMany(models.Donate, { foreignKey: "donateTo" });
   };
 

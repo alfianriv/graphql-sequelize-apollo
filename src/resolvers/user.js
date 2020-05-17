@@ -14,7 +14,7 @@ const createToken = async (user, secret, expiresIn) => {
 export default {
   Query: {
     users: async (parent, {options}, { models }) => {
-      const query = queryHelper(optins)
+      const query = queryHelper(options)
 
       return await models.User.findAll(query);
     },
