@@ -1,4 +1,5 @@
 
+
 # graphql-sequelize-apollo
 
 Made with Nodejs, Sequelize, Apollo Server
@@ -63,4 +64,4 @@ or
 
 ## Usage
 
-Open your browser than to localhost:3000/graphql
+Open your browser than to [localhost:3000/graphql](http://localhost:3000/graphql)
