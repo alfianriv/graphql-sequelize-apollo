@@ -1,5 +1,5 @@
 
-# example-api
+# graphql-sequelize-apollo
 
 Made with Nodejs, Sequelize, Apollo Server
 
