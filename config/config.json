@@ -1,26 +1,39 @@
 {
   "development": {
-    "username": "terryjeong",
-    "password": null,
-    "database": "auth-graphql",
-    "host": "127.0.0.1",
-    "operatorsAliases": false,
-    "port": 5432,
-    "dialect": "postgres"
+    "db": {
+      "username": "alfianriv",
+      "password": "acp3000",
+      "database": "sawerin_db",
+      "host": "127.0.0.1",
+      "operatorsAliases": false,
+      "port": 3306,
+      "dialect": "mysql"
+    },
+    "secret": "acp3000",
+    "port": 3000
   },
   "test": {
-    "username": "terryjeong",
-    "password": null,
-    "database": "database_test",
-    "host": "127.0.0.1",
-    "port": 5432,
-    "dialect": "postgres"
+    "db": {
+      "username": "alfianriv",
+      "password": "acp3000",
+      "database": "sawerin_db",
+      "host": "127.0.0.1",
+      "port": 3306,
+      "dialect": "mysql"
+    },
+    "secret": "acp3000",
+    "port": 3000
   },
   "production": {
-    "username": "terryjeong",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "postgres"
+    "db": {
+      "username": "alfianriv",
+      "password": "acp3000",
+      "database": "sawerin_db",
+      "host": "127.0.0.1",
+      "port": 3306,
+      "dialect": "mysql"
+    },
+    "secret": "acp3000",
+    "port": 3000
   }
 }

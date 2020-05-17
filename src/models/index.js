@@ -1,27 +1,28 @@
 import Sequelize from 'sequelize';
-const dotenv = require('dotenv');
 
-dotenv.config();
+const config = require('../../config/config.json')[process.env.NODE_ENV]
+
 
 let sequelize;
-if (process.env.DATABASE_URL) {
-  sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect: 'postgres',
+if (config.db.database_url) {
+  sequelize = new Sequelize(config.db.database_url, {
+    dialect: config.db.dialect,
   });
 } else {
   sequelize = new Sequelize(
-    process.env.DATABASE,
-    process.env.DATABASE_USER,
-    process.env.DATABASE_PASSWORD,
+    config.db.database,
+    config.db.username,
+    config.db.password, 
     {
-      dialect: 'postgres',
+      host: config.db.host,
+      dialect: config.db.dialect,
     },
   );
 }
 
 const models = {
   User: sequelize.import('./user'),
-  Message: sequelize.import('./message'),
+  Donate: sequelize.import('./donate'),
 };
 
 Object.keys(models).forEach(key => {
@@ -30,5 +31,7 @@ Object.keys(models).forEach(key => {
   }
 });
 
-export { sequelize };
+export {
+  sequelize
+};
 export default models;

@@ -15,12 +15,12 @@ export const isAdmin = combineResolvers(
 );
 
 // permission based
-export const isMessageOwner = async (
+export const isDonateOwner = async (
   parent,
   { id },
   { models, me },
 ) => {
-  const messsage = await models.Message.findById(id, { raw: true });
+  const donate = await models.Donate.findById(id, { raw: true });
 
   if (message.userId !== me.id) {
     throw new ForbiddenError('Not Authenticated as owner');

@@ -32,7 +32,7 @@ export default {
         email,
         password,
       });
-      return { token: createToken(user, secret, '30m') };
+      return { token: createToken(user, secret, '30d') };
     },
     signIn: async (
       parent,
@@ -52,8 +52,7 @@ export default {
       if (!isValid) {
         throw new AuthenticationError('Invalid password.');
       }
-
-      return { token: createToken(user, secret, '30m') };
+      return { token: createToken(user, secret, '30d') };
     },
     deleteUser: combineResolvers(
       isAdmin,
@@ -65,12 +64,19 @@ export default {
     )
   },
   User: {
-    messages: async (user, args, { models }) => {
-      return await models.Message.findAll({
+    donations: async (user, args, { models }) => {
+      return await models.Donate.findAll({
         where: {
           userId: user.id
         }
       });
     },
+    donator: async (user, args, {models}) => {
+      return await models.Donate.findAll({
+        where: {
+          donateTo: user.id
+        }
+      })
+    }
   },
 }

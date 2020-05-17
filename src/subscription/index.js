@@ -1,9 +1,9 @@
 import { PubSub } from 'apollo-server';
 
-import * as MESSAGE_EVENTS from './message';
+import * as DONATE_EVENTS from './donate';
 
 export const EVENTS = {
-  MESSAGE: MESSAGE_EVENTS,
+  DONATE: DONATE_EVENTS,
 };
 
 export default new PubSub();

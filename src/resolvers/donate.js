@@ -3,7 +3,7 @@ import Sequelize from 'sequelize';
 import pubsub, { EVENTS } from '../subscription';
 import {
   isAuthenticated,
-  isMessageOwner,
+  isDonateOwner,
 } from './authorization';
 
 const toCursorHash = string => Buffer.from(string).toString('base64');
@@ -13,7 +13,7 @@ const fromCursorHash = string =>
 
 export default {
   Query: {
-    messages: async (parent, { cursor, limit = 100 }, { models }) => {
+    donates: async (parent, { cursor, limit = 100 }, { models }) => {
       const cursorOptions = cursor
         ? {
           where: {
@@ -23,15 +23,15 @@ export default {
           },
         }
         : {};
-      const messages = await models.Message.findAll({
+      const donates = await models.Donate.findAll({
         order: [['createdAt', 'DESC']],
         limit: limit + 1,
         ...cursorOptions,
       });
       // will check if there is a next page or not.
-      const hasNextPage = messages.length > limit;
+      const hasNextPage = donates.length > limit;
 
-      const edges = hasNextPage ? messages.slice(0, -1) : messages;
+      const edges = hasNextPage ? donates.slice(0, -1) : donates;
 
       // pageInfo now has the cursor of th last message in the list.
       return {
@@ -46,39 +46,44 @@ export default {
     },
   },
   Mutation: {
-    createMessage: combineResolvers(
+    createDonate: combineResolvers(
       isAuthenticated,
-      async (parent, { text }, { models, me }) => {
-        const message = await models.Message.create({
+      async (parent, { text, donation, donateTo }, { models, me }) => {
+        const donate = await models.Donate.create({
           text,
+          donation:donation,
+          donateTo: donateTo,
           userId: me.id,
         });
 
-        pubsub.publish(EVENTS.MESSAGE.CREATED, {
-          messageCreated: { message },
+        pubsub.publish(EVENTS.DONATE.CREATED, {
+          donateCreated: { donate },
         });
 
-        return message;
+        return donate;
       },
     ),
 
-    deleteMessage: combineResolvers(
+    deleteDonate: combineResolvers(
       isAuthenticated,
-      isMessageOwner,
+      isDonateOwner,
       async (parent, { id }, { models }) => {
-        return await models.Message.destroy({ where: { id } });
+        return await models.Donate.destroy({ where: { id } });
       },
     ),
   },
 
-  Message: {
-    user: async (message, args, { loaders }) => {
-      return await loaders.user.load(message.userId);
+  Donate: {
+    user: async (donate, args, { loaders }) => {
+      return await loaders.user.load(donate.userId);
+    },
+    donate_to: async (donate, args, { loaders }) => {
+      return await loaders.user.load(donate.donateTo);
     },
   },
   Subscription: {
-    messageCreated: {
-      subscribe: () => pubsub.asyncIterator(EVENTS.MESSAGE.CREATED),
+    donateCreated: {
+      subscribe: () => pubsub.asyncIterator(EVENTS.DONATE.CREATED),
     },
   },
 };

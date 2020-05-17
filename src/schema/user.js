@@ -27,6 +27,8 @@ export default gql`
         username: String!
         email: String!
         role: String!
-        messages: [Message!]
+        donator: [Donate!]
+        donations: [Donate!]
+        createdAt: Date!
     }
 `;

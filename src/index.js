@@ -9,9 +9,8 @@ import models, { sequelize } from './models';
 import resolvers from './resolvers';
 import schema from './schema';
 import loaders from './loaders';
-const dotenv = require('dotenv');
 
-dotenv.config();
+const config = require('../config/config.json')[process.env.NODE_ENV]
 
 const app = express();
 app.use(cors());
@@ -25,7 +24,7 @@ const getMe = async req => {
 
   if (token) {
     try {
-     return await jwt.verify(token, process.env.SECRET);
+     return await jwt.verify(token, config.secret);
     } catch(e) {
       throw new AuthenticationError(
         'Your session expired, sign in again'
@@ -64,7 +63,7 @@ const server = new ApolloServer({
       return {
         models,
         me,
-        secret: process.env.SECRET,
+        secret: config.secret,
         loaders: {
           user: new DataLoader(keys => loaders.user.batchUsers(keys, models)),
         },
@@ -80,54 +79,10 @@ const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
 const isProduction = !!process.env.DATABASE_URL;
-const port = process.env.PORT || 8000;
+const port = config.port || 3000;
 
 sequelize.sync({ force: isProduction }).then(async () => {
-  if (isProduction) {
-    createUsersWithMessages(new Date());
-  }
   httpServer.listen({ port }, () => {
     console.log(`Apollo Server on http://localhost:${port}/graphql`);
   });
 });
-
-const createUsersWithMessages = async date => {
-  await models.User.create(
-    {
-      username: 'terry',
-      email: 'terry@mail.com',
-      password: 'password',
-      role: 'ADMIN',
-      messages: [
-        {
-          text: 'Published the School of Hard Knocks',
-          createdAt: date.setSeconds(date.getSeconds() + 1),
-        },
-      ],
-    },
-    {
-      include: [models.Message],
-    },
-  );
-
-  await models.User.create(
-    {
-      username: 'jerome',
-      email: 'jerome@mail.com',
-      password: 'testing',
-      messages: [
-        {
-          text: 'Happy to release ...',
-          createdAt: date.setSeconds(date.getSeconds() + 1),
-        },
-        {
-          text: 'Published a complete ...',
-          createdAt: date.setSeconds(date.getSeconds() + 1),
-        },
-      ],
-    },
-    {
-      include: [models.Message],
-    },
-  );
-};
