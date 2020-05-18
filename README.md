@@ -12,50 +12,8 @@ or
     npm install
 
 ## Run
-Before run, create config.json in {directory}/config/config.json and edit 
-like this
+Before run, edit .env file, you can use .env.example file
 
-    	
-	{
-	    	"development": {
-		    	"db": {
-			    	"username": "root",
-			    	"password": "",
-			    	"database": "db_name",
-			    	"host": "127.0.0.1",
-			    	"operatorsAliases": false,
-			    	"port": 3306,
-			    	"dialect": "mysql"
-		    	},
-		    	"secret": "secret",
-		    	"port": 3000
-	    	},
-	    	"test": {
-		    	"db": {
-				"username": "root",
-			    	"password": "",
-			    	"database": "db_name",
-			    	"host": "127.0.0.1",
-			    	"port": 3306,
-			    	"dialect": "mysql"
-			},
-			"secret": "secret",
-			"port": 3000
-	    	},
-	    	"production": {
-		    	"db": {
-			    	"username": "root",
-			    	"password": "",
-			    	"database": "db_name",
-			    	"host": "127.0.0.1",
-			    	"port": 3306,
-			    	"dialect": "mysql"
-		    	},
-		    	"secret": "secret",
-		    	"port": 3000
-		}
-	}
-	
 Then run this:
 
     yarn run dev
