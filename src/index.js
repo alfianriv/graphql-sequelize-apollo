@@ -77,7 +77,7 @@ server.applyMiddleware({ app, path: '/graphql' });
 const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
-const isProduction = !!process.env.DATABASE_URL;
+const isProduction = !!(process.env.NODE_ENV == "production");
 const port = config.port || 3000;
 
 sequelize.sync({ force: isProduction }).then(async () => {
