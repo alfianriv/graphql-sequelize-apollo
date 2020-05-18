@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "start": "NODE_ENV=production node ./node_modules/babel-cli/bin/babel-node.js ./src/index.js"
+    "start": "NODE_ENV=production babel-node ./src/index.js"
   },
   "author": "",
   "license": "ISC",
