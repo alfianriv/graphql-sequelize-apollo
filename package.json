@@ -4,6 +4,7 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
+    "staging": "NODE_ENV=staging nodemon --exec  babel-node ./src/index.js",
     "dev": "NODE_ENV=development nodemon --exec  babel-node ./src/index.js",
     "prod": "NODE_ENV=production node ./node_modules/babel-cli/bin/babel-node.js ./src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,6 +17,7 @@
     "bcrypt": "^3.0.2",
     "cors": "^2.8.4",
     "dataloader": "^1.4.0",
+    "dotenv": "^8.2.0",
     "express": "^4.16.3",
     "graphql": "^14.0.2",
     "graphql-auth": "^1.0.0",

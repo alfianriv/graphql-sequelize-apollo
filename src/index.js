@@ -9,22 +9,21 @@ import models, { sequelize } from './models';
 import resolvers from './resolvers';
 import schema from './schema';
 import loaders from './loaders';
+import dotenv from 'dotenv'
 
-const config = require('../config/config.json')[process.env.NODE_ENV]
+const config = dotenv.config().parsed
 
 const app = express();
 app.use(cors());
 
 const eraseDatabaseOnSync = true;
 
-
-// authentication on a server level.
 const getMe = async req => {
   const token = req.headers['x-token'];
 
   if (token) {
     try {
-     return await jwt.verify(token, config.secret);
+     return await jwt.verify(token, config.SECRET);
     } catch(e) {
       throw new AuthenticationError(
         'Your session expired, sign in again'
@@ -63,7 +62,7 @@ const server = new ApolloServer({
       return {
         models,
         me,
-        secret: config.secret,
+        secret: config.SECRET,
         loaders: {
           user: new DataLoader(keys => loaders.user.batchUsers(keys, models)),
         },
@@ -78,7 +77,7 @@ const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
 const isProduction = !!(process.env.NODE_ENV == "production");
-const port = config.port || 3000;
+const port = config.PORT || 3000;
 
 sequelize.sync({ force: isProduction }).then(async () => {
   httpServer.listen({ port }, () => {

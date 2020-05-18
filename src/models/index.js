@@ -1,21 +1,21 @@
 import Sequelize from 'sequelize';
+import dotenv from 'dotenv'
 
-const config = require('../../config/config.json')[process.env.NODE_ENV]
-
+const config = dotenv.config().parsed
 
 let sequelize;
-if (config.db.database_url) {
-  sequelize = new Sequelize(config.db.database_url, {
-    dialect: config.db.dialect,
+if (config.DB_URL) {
+  sequelize = new Sequelize(config.DB_URL, {
+    dialect: config.DB_DIALECT,
   });
 } else {
   sequelize = new Sequelize(
-    config.db.database,
-    config.db.username,
-    config.db.password, 
+    config.DB_DATABASE,
+    config.DB_USERNAME,
+    config.DB_PASSWORD, 
     {
-      host: config.db.host,
-      dialect: config.db.dialect,
+      host: config.DB_HOST,
+      dialect: config.DB_DIALECT,
     },
   );
 }
