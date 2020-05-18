@@ -23,7 +23,7 @@ const getMe = async req => {
 
   if (token) {
     try {
-     return await jwt.verify(token, config.SECRET);
+     return await jwt.verify(token, process.env.SECRET);
     } catch(e) {
       throw new AuthenticationError(
         'Your session expired, sign in again'
@@ -62,7 +62,7 @@ const server = new ApolloServer({
       return {
         models,
         me,
-        secret: config.SECRET,
+        secret: process.env.SECRET,
         loaders: {
           user: new DataLoader(keys => loaders.user.batchUsers(keys, models)),
         },
@@ -77,7 +77,7 @@ const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
 const isProduction = !!(process.env.NODE_ENV == "production");
-const port = config.PORT || 3000;
+const port = process.env.PORT || 3000;
 
 sequelize.sync({ force: isProduction }).then(async () => {
   httpServer.listen({ port }, () => {

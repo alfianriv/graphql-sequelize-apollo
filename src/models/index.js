@@ -1,16 +1,16 @@
 import Sequelize from 'sequelize';
 import dotenv from 'dotenv'
 
-const config = dotenv.config().parsed
+dotenv.config()
 
 let sequelize;
 
 sequelize = new Sequelize(
-  config.DB_DATABASE,
-  config.DB_USERNAME,
-  config.DB_PASSWORD, {
-    host: config.DB_HOST,
-    dialect: config.DB_DIALECT,
+  process.env.DB_DATABASE,
+  process.env.DB_USERNAME,
+  process.env.DB_PASSWORD, {
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT,
   },
 );
 
