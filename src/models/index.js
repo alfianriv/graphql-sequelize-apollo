@@ -4,21 +4,15 @@ import dotenv from 'dotenv'
 const config = dotenv.config().parsed
 
 let sequelize;
-if (config.DB_URL) {
-  sequelize = new Sequelize(config.DB_URL, {
+
+sequelize = new Sequelize(
+  config.DB_DATABASE,
+  config.DB_USERNAME,
+  config.DB_PASSWORD, {
+    host: config.DB_HOST,
     dialect: config.DB_DIALECT,
-  });
-} else {
-  sequelize = new Sequelize(
-    config.DB_DATABASE,
-    config.DB_USERNAME,
-    config.DB_PASSWORD, 
-    {
-      host: config.DB_HOST,
-      dialect: config.DB_DIALECT,
-    },
-  );
-}
+  },
+);
 
 const models = {
   User: sequelize.import('./user'),
