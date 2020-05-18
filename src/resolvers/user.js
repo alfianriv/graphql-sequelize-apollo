@@ -50,7 +50,7 @@ export default {
         );
       }
 
-      const isValid = await user.validatePassword(password);
+      const isValid = await validatePassword(password, user.password);
 
       if (!isValid) {
         throw new AuthenticationError('Invalid password.');
@@ -83,3 +83,7 @@ export default {
     }
   },
 }
+
+const validatePassword = async function(password, passwordHashed) {
+  return await bcrypt.compare(password, passwordHashed);
+};
