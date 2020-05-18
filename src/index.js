@@ -11,7 +11,7 @@ import schema from './schema';
 import loaders from './loaders';
 import dotenv from 'dotenv'
 
-const config = dotenv.config().parsed
+dotenv.config().parsed
 
 const app = express();
 app.use(cors());
