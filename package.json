@@ -11,6 +11,7 @@
   "dependencies": {
     "apollo-server": "^2.1.0",
     "apollo-server-express": "^2.1.0",
+    "babel-node": "^0.0.1-security",
     "bcrypt": "^3.0.2",
     "cors": "^2.8.4",
     "dataloader": "^1.4.0",
