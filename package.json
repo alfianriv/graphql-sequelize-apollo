@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "NODE_ENV=development nodemon --exec  babel-node ./src/index.js",
-    "prod": "NODE_ENV=production node --exec  babel-node ./src/index.js",
+    "prod": "NODE_ENV=production node ./node_modules/babel-cli/bin/babel-node.js ./src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
