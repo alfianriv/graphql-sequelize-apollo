@@ -36,6 +36,7 @@ const server = new ApolloServer({
   introspection: true,
   typeDefs: schema,
   resolvers,
+  playground: true,
   formatError: error => {
     const message = error.message
       .replace('SequelizeValidationError: ', '')
