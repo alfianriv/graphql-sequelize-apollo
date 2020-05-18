@@ -25,6 +25,7 @@
     "graphql-resolvers": "^0.2.2",
     "jsonwebtoken": "^8.3.0",
     "mysql2": "^2.1.0",
+    "pg": "^8.2.1",
     "sequelize": "^4.39.0",
     "uuid": "^3.3.2"
   },
