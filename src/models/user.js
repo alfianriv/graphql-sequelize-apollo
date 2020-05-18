@@ -33,14 +33,13 @@ const user = (sequelize, DataTypes) => {
   });
 
   User.beforeCreate(async user => {
-    user.password = await generatePasswordHash()
+    user.password = await generatePasswordHash(user.password)
   });
 
   const generatePasswordHash = async function(password) {
     const saltRounds = 10;
     return await bcrypt.hash(password, saltRounds);
   };
-
 
   User.associate = models => {
     User.hasMany(models.Donate);
