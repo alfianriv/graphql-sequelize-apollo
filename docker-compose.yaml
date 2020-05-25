@@ -1,0 +1,11 @@
+version: '3'
+services: 
+    graphql-sequelize:
+        container_name: graphql-sequelize
+        build: .
+        ports: 
+            - 3000:3000
+        environment: 
+            DB_URL: postgres://cfnzflqa:4_gHHM_9w5FKojCShXV9k5pbkAQeecMz@rosie.db.elephantsql.com:5432/cfnzflqa
+            DB_DIALECT: postgres
+            SECRET: acp3000

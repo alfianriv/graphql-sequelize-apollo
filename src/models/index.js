@@ -6,7 +6,7 @@ dotenv.config();
 let sequelize;
 
 if (process.env.DB_URL) {
-  sequelize = new Sequelize(process.env.URL, {
+  sequelize = new Sequelize(process.env.DB_URL, {
     dialect: process.env.DB_DIALECT,
     operatorsAliases: false,
   });
